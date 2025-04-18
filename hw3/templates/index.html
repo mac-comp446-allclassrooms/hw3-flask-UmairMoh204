@@ -1,0 +1,92 @@
+{% extends "base.html" %}
+
+{% block title %}All Movie Reviews{% endblock %}
+
+{% block content %}
+<div class="row mb-4">
+    <div class="col">
+        <h1>My Movie Reviews</h1>
+        <p>Write and manage all movie reviews</p>
+    </div>
+    <div class="col-auto d-flex align-items-center">
+        <a href="{{ url_for('new_review') }}" class="btn btn-primary">
+            <i class="fas fa-plus-circle me-2"></i>Add Review
+        </a>
+    </div>
+</div>
+
+<div class="card">
+    <div class="card-body">
+        <div class="table-responsive">
+            <table class="table table-hover">
+                <thead class="table-light">
+                    <tr>
+                        <th>Movie Title</th>
+                        <th>Rating</th>
+                        <th>Edit or Delete</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% if reviews %}
+                        {% for review in reviews %}
+                        <tr>
+                            <td>
+                                <a href="{{ url_for('review_info', review_id=review.id) }}" class="text-decoration-none review-title">
+                                    {{ review.title }}
+                                </a>
+                            </td>
+                            <td>
+                                <div class="star-rating">
+                                    {% for i in range(5) %}
+                                        {% if i < review.rating %}
+                                            <i class="fas fa-star"></i>
+                                        {% else %}
+                                            <i class="far fa-star"></i>
+                                        {% endif %}
+                                    {% endfor %}
+                                </div>
+                            </td>
+                            <td>
+                                <div class="btn-group" role="group">
+                                    <a href="{{ url_for('edit_review', review_id=review.id) }}" class="btn btn-sm btn-outline-primary">
+                                        <i class="fas fa-edit"></i> Edit
+                                    </a>
+                                    <button type="button" class="btn btn-sm btn-outline-danger" data-bs-toggle="modal" data-bs-target="#deleteModal{{ review.id }}">
+                                        <i class="fas fa-trash"></i> Delete
+                                    </button>
+                                </div>
+                                
+                                <!-- Confirms If They Want To Delete The Review -->
+                                <div class="modal fade" id="deleteModal{{ review.id }}" tabindex="-1" aria-hidden="true">
+                                    <div class="modal-dialog">
+                                        <div class="modal-content">
+                                            <div class="modal-header">
+                                                <h5 class="modal-title">Confirm Delete</h5>
+                                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                            </div>
+                                            <div class="modal-body">
+                                                Are you sure you want to delete the review for "{{ review.title }}"?
+                                            </div>
+                                            <div class="modal-footer">
+                                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                                                <form action="{{ url_for('delete_review', review_id=review.id) }}" method="post">
+                                                    <button type="submit" class="btn btn-danger">Delete</button>
+                                                </form>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    {% else %}
+                        <tr>
+                            <td colspan="3" class="text-center">No reviews found. <a href="{{ url_for('new_review') }}">Create your first review</a>!</td>
+                        </tr>
+                    {% endif %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %} 
